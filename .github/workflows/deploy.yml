@@ -1,5 +1,4 @@
 name: Deploy Delia's Project
-
 on:
   push:
     branches: [ main, master ]
@@ -18,11 +17,13 @@ jobs:
       run: |
         if [ ! -f .env ]; then
           cp .env.example .env
-          php artisan key:generate
         fi
-        
+    
     - name: Install Composer Dependencies
       run: composer install --prefer-dist --no-interaction
+    
+    - name: Generate Application Key
+      run: php artisan key:generate --force
       
     - name: Set Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
@@ -65,7 +66,7 @@ jobs:
         echo "📦 Installing NPM dependencies..."
         npm ci
         
-        echo "🏗️ Building assets..."
+        echo "🏗 Building assets..."
         npm run build
         
         echo "🧹 Clearing caches..."
@@ -74,7 +75,7 @@ jobs:
         php artisan view:clear
         php artisan route:clear
         
-        echo "🗄️ Running migrations..."
+        echo "🗄 Running migrations..."
         php artisan migrate --force
         
         echo "⚡ Optimizing application..."
